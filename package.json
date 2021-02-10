@@ -1,0 +1,15 @@
+{
+  "name": "fp-ts-generators",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "peerDependencies": {
+    "fp-ts": "^2.9.5"
+  },
+  "dependencies": {
+    "@no-day/fp-ts-lcg": "^1.0.0-rc.2"
+  },
+  "devDependencies": {
+    "fp-ts": "^2.9.5"
+  }
+}
