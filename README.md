@@ -2,7 +2,7 @@
 
 A seeded pseudorandom number generator based on the linear congruential generator algorithm.
 
-A port of [purescript-lcg](https://github.com/purescript/purescript-lcg).
+A port of the Generator module from [purescript-quickcheck](https://github.com/purescript/purescript-quickcheck).
 
 ## Install
 
