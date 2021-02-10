@@ -11,12 +11,16 @@
     "@no-day/fp-ts-lcg": "^1.0.0-rc.2"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.20",
     "docs-ts": "^0.5.3",
     "fp-ts": "^2.9.5",
-    "prettier": "^2.2.1"
+    "jest": "^26.6.3",
+    "prettier": "^2.2.1",
+    "ts-jest": "^26.5.1",
+    "typescript": "^4.1.4"
   },
   "scripts": {
-    "test": "yarn jest",
+    "test": "yarn jest --passWithNoTests",
     "build": "tsc",
     "prepublish": "yarn build",
     "docs": "yarn docs-ts"
