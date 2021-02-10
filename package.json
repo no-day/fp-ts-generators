@@ -1,5 +1,6 @@
 {
   "name": "fp-ts-generators",
+  "homepage": "https://github.com/no-day/fp-ts-generators",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -10,6 +11,14 @@
     "@no-day/fp-ts-lcg": "^1.0.0-rc.2"
   },
   "devDependencies": {
-    "fp-ts": "^2.9.5"
+    "docs-ts": "^0.5.3",
+    "fp-ts": "^2.9.5",
+    "prettier": "^2.2.1"
+  },
+  "scripts": {
+    "test": "yarn jest",
+    "build": "tsc",
+    "prepublish": "yarn build",
+    "docs": "yarn docs-ts"
   }
 }
