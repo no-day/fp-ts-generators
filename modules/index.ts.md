@@ -48,6 +48,9 @@ Added in v1.0.0
   - [mkSeed](#mkseed)
   - [seedMax](#seedmax)
   - [seedMin](#seedmin)
+- [Utils](#utils)
+  - [bind](#bind)
+  - [bindTo](#bindto)
 
 ---
 
@@ -631,6 +634,31 @@ Minimum possible seed value
 
 ```ts
 export declare const seedMin: number
+```
+
+Added in v1.0.0
+
+# Utils
+
+## bind
+
+**Signature**
+
+```ts
+export declare const bind: <N extends string, A, S, B>(
+  name: Exclude<N, keyof A>,
+  f: (a: A) => State<S, B>
+) => (fa: State<S, A>) => State<S, { [K in N | keyof A]: K extends keyof A ? A[K] : B }>
+```
+
+Added in v1.0.0
+
+## bindTo
+
+**Signature**
+
+```ts
+export declare const bindTo: <N extends string>(name: N) => <S, A>(fa: State<S, A>) => State<S, { [K in N]: A }>
 ```
 
 Added in v1.0.0
