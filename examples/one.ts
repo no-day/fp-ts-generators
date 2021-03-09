@@ -1,4 +1,4 @@
-import { Gen, generateSample, recordOf, boolean, char, string, int, generate, mkSeed, arrayOf, float } from '../src';
+import { Gen, generateSample, recordOf, boolean, string, int, mkSeed, arrayOf, float } from '../src';
 import * as assert from 'assert';
 import { pipe } from 'fp-ts/function';
 

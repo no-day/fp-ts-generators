@@ -44,19 +44,7 @@ npm install fp-ts @no-day/fp-ts-generators
 # Example
 
 ```ts
-import {
-  Gen,
-  generateSample,
-  recordOf,
-  boolean,
-  char,
-  string,
-  int,
-  generate,
-  mkSeed,
-  arrayOf,
-  float,
-} from '@no-day/fp-ts-generators';
+import { Gen, generateSample, recordOf, boolean, string, int, mkSeed, arrayOf, float } from '@no-day/fp-ts-generators';
 import * as assert from 'assert';
 import { pipe } from 'fp-ts/function';
 
