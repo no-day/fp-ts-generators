@@ -1,6 +1,6 @@
 /** @since 1.0.0 */
 
-import { Seed, seedMax } from '@no-day/fp-ts-lcg';
+import { Seed, seedMax, seedMin } from '@no-day/fp-ts-lcg';
 import * as lcg from '@no-day/fp-ts-lcg';
 import { State } from 'fp-ts/State';
 import * as state from 'fp-ts/State';
@@ -8,6 +8,8 @@ import { pipe } from 'fp-ts/function';
 import { sequenceT } from 'fp-ts/Apply';
 import * as apply from 'fp-ts/Apply';
 import * as array from 'fp-ts/Array';
+import * as option from 'fp-ts/Option';
+import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray';
 
 // -------------------------------------------------------------------------------------
 // Re-export
@@ -69,9 +71,7 @@ export type Gen<T> = State<GenState, T>;
 // Internal
 // -------------------------------------------------------------------------------------
 
-const clamp: (a: number, b: number) => (c: number) => number = (a, b) => (
-  c
-) => {
+const clamp: (a: number, b: number) => (c: number) => number = (a, b) => (c) => {
   const [min, max] = a < b ? [a, b] : [b, a];
 
   const diff = max - min;
@@ -80,9 +80,8 @@ const clamp: (a: number, b: number) => (c: number) => number = (a, b) => (
 };
 
 /**
- * Create a random generator which chooses uniformly distributed integers from
- * the closed interval `[a, b]`. Note that very large intervals (above 2^32)
- * will cause a loss of uniformity.
+ * Create a random generator which chooses uniformly distributed integers from the closed interval `[a, b]`. Note that
+ * very large intervals (above 2^32) will cause a loss of uniformity.
  *
  * @since 1.0.0
  * @category Constructors
@@ -110,6 +109,15 @@ const maxSaveInt = saveIntervalInt / 2;
 
 const minSaveInt = -maxSaveInt;
 
+const seedDiff = seedMax - seedMin;
+
+/** A random generator which approximates a uniform random variable on `[0, 1]` */
+const uniform = <T>(): Gen<number> =>
+  pipe(
+    lcgStep,
+    state.map((n) => n - seedMin / seedDiff)
+  );
+
 // -------------------------------------------------------------------------------------
 // Constructors
 // -------------------------------------------------------------------------------------
@@ -126,17 +134,14 @@ const minSaveInt = -maxSaveInt;
  *   assert.deepStrictEqual(
  *     pipe(
  *       gen.lcgStep,
- *       gen.vector(4),
- *       gen.generate({ seed: gen.mkSeed(42) })
+ *
+ *       gen.generateSample({ count: 4, seed: gen.mkSeed(42) })
  *     ),
  *     [43, 2075653, 1409598201, 1842888923]
  *   );
  */
 
-export const lcgStep: Gen<number> = (s) => [
-  lcg.unSeed(s.newSeed),
-  { newSeed: lcg.lcgNext(s.newSeed), size: s.size },
-];
+export const lcgStep: Gen<number> = (s) => [lcg.unSeed(s.newSeed), { newSeed: lcg.lcgNext(s.newSeed), size: s.size }];
 
 /**
  * Generates a pseudo random integer in a given interval
@@ -150,8 +155,8 @@ export const lcgStep: Gen<number> = (s) => [
  *   assert.deepStrictEqual(
  *     pipe(
  *       gen.int({ min: -10, max: 10 }),
- *       gen.vector(4),
- *       gen.generate({ seed: gen.mkSeed(42) })
+ *
+ *       gen.generateSample({ count: 4, seed: gen.mkSeed(42) })
  *     ),
  *     [-9, 3, 8, -2]
  *   );
@@ -175,9 +180,9 @@ export const int = ({
  *
  *   assert.deepStrictEqual(
  *     pipe(
- *       gen.record({ foo: gen.int(), bar: gen.int(), baz: gen.int() }),
- *       gen.vector(4),
- *       gen.generate({ seed: gen.mkSeed(42) })
+ *       gen.recordOf({ foo: gen.int(), bar: gen.int(), baz: gen.int() }),
+ *
+ *       gen.generateSample({ count: 4, seed: gen.mkSeed(42) })
  *     ),
  *     [
  *       {
@@ -203,7 +208,7 @@ export const int = ({
  *     ]
  *   );
  */
-export const record = apply.sequenceS(state.state);
+export const recordOf = apply.sequenceS(state.state);
 
 /**
  * Generates a pseudo random tuple if generators are provided for each position
@@ -216,9 +221,9 @@ export const record = apply.sequenceS(state.state);
  *
  *   assert.deepStrictEqual(
  *     pipe(
- *       gen.tuple(gen.int(), gen.int()),
- *       gen.vector(4),
- *       gen.generate({ seed: gen.mkSeed(42) })
+ *       gen.tupleOf(gen.int(), gen.int()),
+ *
+ *       gen.generateSample({ count: 4, seed: gen.mkSeed(42) })
  *     ),
  *     [
  *       [-57, 27],
@@ -228,7 +233,7 @@ export const record = apply.sequenceS(state.state);
  *     ]
  *   );
  */
-export const tuple = apply.sequenceT(state.state);
+export const tupleOf = apply.sequenceT(state.state);
 
 /**
  * Generates a pseudo random array of a fixed size
@@ -240,11 +245,20 @@ export const tuple = apply.sequenceT(state.state);
  *   import { pipe } from 'fp-ts/function';
  *
  *   assert.deepStrictEqual(
- *     pipe(gen.vector(8)(gen.int()), gen.generate({ seed: gen.mkSeed(42) })),
- *     [-57, 27, -25, 22, -14, 73, -64, -84]
+ *     pipe(
+ *       gen.vectorOf(6)(gen.int()),
+ *
+ *       gen.generateSample({ count: 4, seed: gen.mkSeed(42) })
+ *     ),
+ *     [
+ *       [-57, 27, -25, 22, -14, 73],
+ *       [-64, -84, -13, 50, 36, -6],
+ *       [16, -62, 76, -8, -44, 96],
+ *       [88, 48, 0, -37, -53, 23],
+ *     ]
  *   );
  */
-export const vector = (size: number) => <T>(gen: Gen<T>): Gen<Array<T>> =>
+export const vectorOf = (size: number) => <T>(gen: Gen<T>): Gen<Array<T>> =>
   pipe(
     array.replicate(size, gen),
     array.reduce<Gen<T>, Gen<T[]>>(state.of([] as T[]), (accum, gen) =>
@@ -256,6 +270,45 @@ export const vector = (size: number) => <T>(gen: Gen<T>): Gen<Array<T>> =>
             state.map((gen_) => array.snoc(accum_, gen_))
           )
         )
+      )
+    )
+  );
+
+/**
+ * Create a random generator which selects and executes a random generator from a non-empty array of random generators
+ * with uniform probability.
+ *
+ * @since 1.0.0
+ * @category Constructors
+ * @example
+ *   import * as gen from '@no-day/fp-ts-generators';
+ *   import { pipe } from 'fp-ts/function';
+ *
+ *   assert.deepStrictEqual(
+ *     pipe(
+ *       gen.oneOf([gen.int({ min: 10, max: 20 }), gen.int({ min: 50, max: 60 })]),
+ *
+ *       gen.generateSample({ count: 6, seed: gen.mkSeed(42) })
+ *     ),
+ *     [58, 57, 55, 60, 12, 10]
+ *   );
+ */
+export const oneOf = <T>(gens: NonEmptyArray<Gen<T>>): Gen<T> =>
+  pipe(
+    chooseInt(
+      0,
+      pipe(
+        gens,
+        (xs) => xs.length,
+        (n) => n - 1
+      )
+    ),
+    state.chain((n) =>
+      pipe(
+        array.lookup(n)(gens),
+        option.getOrElse((): any => {
+          throw new Error('Internal inconsistency.');
+        })
       )
     )
   );
@@ -278,8 +331,17 @@ export const evalGen = state.evaluate;
  * @since 1.0.0
  * @category Destructors
  */
-export const generate: (opts: {
-  seed: Seed;
-  size?: Size;
-}) => <T>(gen: Gen<T>) => T = ({ seed, size = 10 }) => (gen) =>
+export const generate: (opts: { seed: Seed; size?: Size }) => <T>(gen: Gen<T>) => T = ({ seed, size = 10 }) => (gen) =>
   evalGen({ newSeed: seed, size })(gen);
+
+/**
+ * Run a random generator with a given seed and size. Produces an array of results, configured by count.
+ *
+ * @since 1.0.0
+ * @category Destructors
+ */
+export const generateSample: (opts: { seed: Seed; size?: Size; count?: number }) => <T>(gen: Gen<T>) => T[] = ({
+  seed,
+  size = 10,
+  count = 10,
+}) => (gen) => pipe(gen, vectorOf(count), generate({ seed, size }));
