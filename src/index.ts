@@ -41,12 +41,40 @@ export {
 
 export {
   /**
-   * Functor
-   *
    * @since 1.0.0
-   * @category Util
+   * @category Instances
+   */
+  Functor,
+  /**
+   * @since 1.0.0
+   * @category Functor
    */
   map,
+  /**
+   * @since 1.0.0
+   * @category Instances
+   */
+  Applicative,
+  /**
+   * @since 1.0.0
+   * @category Applicative
+   */
+  of,
+  /**
+   * @since 1.0.0
+   * @category Applicative
+   */
+  ap,
+  /**
+   * @since 1.0.0
+   * @category Instances
+   */
+  Monad,
+  /**
+   * @since 1.0.0
+   * @category Monad
+   */
+  chain,
 } from 'fp-ts/State';
 // --------------------------------------------------------------------------------------------------------------------
 // Model
