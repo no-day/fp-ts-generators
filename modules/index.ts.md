@@ -13,11 +13,14 @@ Added in v1.0.0
 <h2 class="text-delta">Table of contents</h2>
 
 - [Constructors](#constructors)
+  - [arrayOf](#arrayof)
   - [boolean](#boolean)
+  - [char](#char)
   - [int](#int)
   - [lcgStep](#lcgstep)
   - [oneOf](#oneof)
   - [recordOf](#recordof)
+  - [string](#string)
   - [tupleOf](#tupleof)
   - [vectorOf](#vectorof)
 - [Destructors](#destructors)
@@ -36,6 +39,34 @@ Added in v1.0.0
 ---
 
 # Constructors
+
+## arrayOf
+
+Generates a pseudo random array
+
+**Signature**
+
+```ts
+export declare const arrayOf: <T>(gen: Gen<T>) => Gen<T[]>
+```
+
+**Example**
+
+```ts
+import { mkSeed, generateSample, arrayOf, int } from '@no-day/fp-ts-generators'
+import { pipe } from 'fp-ts/function'
+
+assert.deepStrictEqual(
+  pipe(
+    arrayOf(int()),
+
+    generateSample({ count: 10, size: 5, seed: mkSeed(42) })
+  ),
+  [[27], [22, -14, 73], [-84, -13, 50], [-6, 16, -62, 76], [-44, 96], [48, 0], [], [23, 75, -63, -71, 64], [], [-83]]
+)
+```
+
+Added in v1.0.0
 
 ## boolean
 
@@ -60,6 +91,43 @@ assert.deepStrictEqual(
     generateSample({ seed: mkSeed(42) })
   ),
   [true, true, true, true, true, false, true, true, false, false]
+)
+```
+
+Added in v1.0.0
+
+## char
+
+A pseudo random character
+
+**Signature**
+
+```ts
+export declare const char: ({ from, to }?: { from?: string; to?: string }) => Gen<string>
+```
+
+**Example**
+
+```ts
+import { mkSeed, generateSample, char } from '@no-day/fp-ts-generators'
+import { pipe } from 'fp-ts/function'
+
+assert.deepStrictEqual(
+  pipe(
+    char(),
+
+    generateSample({ count: 20, seed: mkSeed(42) })
+  ),
+  ['K', '}', 'l', 'i', 'C', ':', 'n', 'o', 'q', '0', '{', 'h', '}', 'I', '=', 'o', '<', 'U', 'Z', ';']
+)
+
+assert.deepStrictEqual(
+  pipe(
+    char({ from: 'a', to: 'z' }),
+
+    generateSample({ count: 20, seed: mkSeed(42) })
+  ),
+  ['r', 'v', 'l', 'f', 'p', 'i', 'n', 'b', 'k', 's', 'w', 'a', 'j', 'e', 'b', 'q', 'p', 'w', 'a', 'm']
 )
 ```
 
@@ -196,6 +264,35 @@ assert.deepStrictEqual(
       foo: -6,
     },
   ]
+)
+```
+
+Added in v1.0.0
+
+## string
+
+A pseudo random string
+
+**Signature**
+
+```ts
+export declare const string: ({ from, to }?: { from?: string; to?: string }) => Gen<string>
+```
+
+**Example**
+
+```ts
+import { mkSeed, generateSample, string } from '@no-day/fp-ts-generators'
+import { pipe } from 'fp-ts/function'
+
+assert.deepStrictEqual(
+  pipe(
+    string({ from: 'a', to: 'z' }),
+
+    generateSample({ count: 10, seed: mkSeed(42) })
+  ),
+
+  ['vlfpinbksw', '', 'ebqpwa', 'uknubf', 'lq', 'jflq', 'fehcuxoqm', 'lsug', 'bat', 't']
 )
 ```
 
