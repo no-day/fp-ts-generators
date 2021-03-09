@@ -12,6 +12,9 @@ Added in v1.0.0
 
 <h2 class="text-delta">Table of contents</h2>
 
+- [Applicative](#applicative)
+  - [ap](#ap)
+  - [of](#of)
 - [Constructors](#constructors)
   - [arrayOf](#arrayof)
   - [boolean](#boolean)
@@ -29,17 +32,46 @@ Added in v1.0.0
   - [evalGen](#evalgen)
   - [generate](#generate)
   - [generateSample](#generatesample)
+- [Functor](#functor)
+  - [map](#map)
+- [Instances](#instances)
+  - [Applicative](#applicative-1)
+  - [Functor](#functor-1)
+  - [Monad](#monad)
 - [Model](#model)
   - [Gen (type alias)](#gen-type-alias)
   - [GenState (type alias)](#genstate-type-alias)
   - [Size (type alias)](#size-type-alias)
+- [Monad](#monad-1)
+  - [chain](#chain)
 - [Util](#util)
-  - [map](#map)
   - [mkSeed](#mkseed)
   - [seedMax](#seedmax)
   - [seedMin](#seedmin)
 
 ---
+
+# Applicative
+
+## ap
+
+**Signature**
+
+```ts
+export declare const ap: <E, A>(fa: State<E, A>) => <B>(fab: State<E, (a: A) => B>) => State<E, B>
+```
+
+Added in v1.0.0
+
+## of
+
+**Signature**
+
+```ts
+export declare const of: <E, A>(a: A) => State<E, A>
+```
+
+Added in v1.0.0
 
 # Constructors
 
@@ -471,6 +503,50 @@ export declare const generateSample: (opts: { seed: Seed; size?: number; count?:
 
 Added in v1.0.0
 
+# Functor
+
+## map
+
+**Signature**
+
+```ts
+export declare const map: <A, B>(f: (a: A) => B) => <E>(fa: State<E, A>) => State<E, B>
+```
+
+Added in v1.0.0
+
+# Instances
+
+## Applicative
+
+**Signature**
+
+```ts
+export declare const Applicative: Applicative2<'State'>
+```
+
+Added in v1.0.0
+
+## Functor
+
+**Signature**
+
+```ts
+export declare const Functor: Functor2<'State'>
+```
+
+Added in v1.0.0
+
+## Monad
+
+**Signature**
+
+```ts
+export declare const Monad: Monad2<'State'>
+```
+
+Added in v1.0.0
+
 # Model
 
 ## Gen (type alias)
@@ -509,19 +585,19 @@ export type Size = number
 
 Added in v1.0.0
 
-# Util
+# Monad
 
-## map
-
-Functor
+## chain
 
 **Signature**
 
 ```ts
-export declare const map: <A, B>(f: (a: A) => B) => <E>(fa: State<E, A>) => State<E, B>
+export declare const chain: <E, A, B>(f: (a: A) => State<E, B>) => (ma: State<E, A>) => State<E, B>
 ```
 
 Added in v1.0.0
+
+# Util
 
 ## mkSeed
 
