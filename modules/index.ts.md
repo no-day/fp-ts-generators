@@ -16,12 +16,14 @@ Added in v1.0.0
   - [arrayOf](#arrayof)
   - [boolean](#boolean)
   - [char](#char)
+  - [float](#float)
   - [int](#int)
   - [lcgStep](#lcgstep)
   - [oneOf](#oneof)
   - [recordOf](#recordof)
   - [string](#string)
   - [tupleOf](#tupleof)
+  - [uniform](#uniform)
   - [vectorOf](#vectorof)
 - [Destructors](#destructors)
   - [evalGen](#evalgen)
@@ -32,6 +34,7 @@ Added in v1.0.0
   - [GenState (type alias)](#genstate-type-alias)
   - [Size (type alias)](#size-type-alias)
 - [Util](#util)
+  - [map](#map)
   - [mkSeed](#mkseed)
   - [seedMax](#seedmax)
   - [seedMin](#seedmin)
@@ -128,6 +131,38 @@ assert.deepStrictEqual(
     generateSample({ count: 20, seed: mkSeed(42) })
   ),
   ['r', 'v', 'l', 'f', 'p', 'i', 'n', 'b', 'k', 's', 'w', 'a', 'j', 'e', 'b', 'q', 'p', 'w', 'a', 'm']
+)
+```
+
+Added in v1.0.0
+
+## float
+
+Generates a pseudo random float in a given interval
+
+**Signature**
+
+```ts
+export declare const float: ({ min, max }?: { min?: number; max?: number }) => Gen<number>
+```
+
+**Example**
+
+```ts
+import { mkSeed, generateSample, float } from '@no-day/fp-ts-generators'
+import * as gen from '@no-day/fp-ts-generators'
+import { pipe } from 'fp-ts/function'
+
+const formatFloat = (digits: number) => (n: number) => Math.round(n * 10 ** digits) / 10 ** digits
+
+assert.deepStrictEqual(
+  pipe(
+    float({ min: -10, max: 10 }),
+    gen.map(formatFloat(4)),
+
+    generateSample({ count: 10, seed: mkSeed(42) })
+  ),
+  [-10, -9.9807, 3.1279, 7.1632, -3.2143, 2.4419, -6.8668, -7.1208, -7.7128, -3.9007]
 )
 ```
 
@@ -333,6 +368,38 @@ assert.deepStrictEqual(
 
 Added in v1.0.0
 
+## uniform
+
+A random generator which approximates a uniform random variable on `[0, 1]`
+
+**Signature**
+
+```ts
+export declare const uniform: <T>() => Gen<number>
+```
+
+**Example**
+
+```ts
+import { mkSeed, generateSample, uniform } from '@no-day/fp-ts-generators'
+import * as gen from '@no-day/fp-ts-generators'
+import { pipe } from 'fp-ts/function'
+
+const formatFloat = (digits: number) => (n: number) => Math.round(n * 10 ** digits) / 10 ** digits
+
+assert.deepStrictEqual(
+  pipe(
+    uniform(),
+    gen.map(formatFloat(4)),
+
+    generateSample({ count: 10, seed: mkSeed(42) })
+  ),
+  [0, 0.001, 0.6564, 0.8582, 0.3393, 0.6221, 0.1567, 0.144, 0.1144, 0.305]
+)
+```
+
+Added in v1.0.0
+
 ## vectorOf
 
 Generates a pseudo random array of a fixed size
@@ -443,6 +510,18 @@ export type Size = number
 Added in v1.0.0
 
 # Util
+
+## map
+
+Functor
+
+**Signature**
+
+```ts
+export declare const map: <A, B>(f: (a: A) => B) => <E>(fa: State<E, A>) => State<E, B>
+```
+
+Added in v1.0.0
 
 ## mkSeed
 
