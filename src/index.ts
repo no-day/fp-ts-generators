@@ -39,6 +39,15 @@ export {
   seedMax,
 } from '@no-day/fp-ts-lcg';
 
+export {
+  /**
+   * Functor
+   *
+   * @since 1.0.0
+   * @category Util
+   */
+  map,
+} from 'fp-ts/State';
 // --------------------------------------------------------------------------------------------------------------------
 // Model
 // --------------------------------------------------------------------------------------------------------------------
@@ -117,13 +126,6 @@ const minSaveInt = -maxSaveInt;
 
 const seedDiff = seedMax - seedMin;
 
-/** A random generator which approximates a uniform random variable on `[0, 1]` */
-const uniform = <T>(): Gen<number> =>
-  pipe(
-    lcgStep,
-    state.map((n) => n - seedMin / seedDiff)
-  );
-
 // --------------------------------------------------------------------------------------------------------------------
 // Constructors
 // --------------------------------------------------------------------------------------------------------------------
@@ -150,6 +152,34 @@ const uniform = <T>(): Gen<number> =>
 export const lcgStep: Gen<number> = (s) => [lcg.unSeed(s.newSeed), { newSeed: lcg.lcgNext(s.newSeed), size: s.size }];
 
 /**
+ * A random generator which approximates a uniform random variable on `[0, 1]`
+ *
+ * @since 1.0.0
+ * @category Constructors
+ * @example
+ *   import { mkSeed, generateSample, uniform } from '@no-day/fp-ts-generators';
+ *   import * as gen from '@no-day/fp-ts-generators';
+ *   import { pipe } from 'fp-ts/function';
+ *
+ *   const formatFloat = (digits: number) => (n: number) => Math.round(n * 10 ** digits) / 10 ** digits;
+ *
+ *   assert.deepStrictEqual(
+ *     pipe(
+ *       uniform(),
+ *       gen.map(formatFloat(4)),
+ *
+ *       generateSample({ count: 10, seed: mkSeed(42) })
+ *     ),
+ *     [0, 0.001, 0.6564, 0.8582, 0.3393, 0.6221, 0.1567, 0.144, 0.1144, 0.305]
+ *   );
+ */
+export const uniform = <T>(): Gen<number> =>
+  pipe(
+    lcgStep,
+    state.map((n) => (n - seedMin) / seedDiff)
+  );
+
+/**
  * Generates a pseudo random integer in a given interval
  *
  * @since 1.0.0
@@ -174,6 +204,43 @@ export const int = ({
   min?: number;
   max?: number;
 } = {}): Gen<number> => chooseInt(min, max);
+
+/**
+ * Generates a pseudo random float in a given interval
+ *
+ * @since 1.0.0
+ * @category Constructors
+ * @example
+ *   import { mkSeed, generateSample, float } from '@no-day/fp-ts-generators';
+ *   import * as gen from '@no-day/fp-ts-generators';
+ *   import { pipe } from 'fp-ts/function';
+ *
+ *   const formatFloat = (digits: number) => (n: number) => Math.round(n * 10 ** digits) / 10 ** digits;
+ *
+ *   assert.deepStrictEqual(
+ *     pipe(
+ *       float({ min: -10, max: 10 }),
+ *       gen.map(formatFloat(4)),
+ *
+ *       generateSample({ count: 10, seed: mkSeed(42) })
+ *     ),
+ *     [-10, -9.9807, 3.1279, 7.1632, -3.2143, 2.4419, -6.8668, -7.1208, -7.7128, -3.9007]
+ *   );
+ */
+export const float = ({
+  min = -100.0,
+  max = 100.0,
+}: {
+  min?: number;
+  max?: number;
+} = {}): Gen<number> => {
+  const diff = Math.abs(max - min);
+
+  return pipe(
+    uniform(),
+    state.map((n) => min + n * diff)
+  );
+};
 
 /**
  * Generates a pseudo random record if generators are provided for each field
