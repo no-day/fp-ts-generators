@@ -4,16 +4,16 @@ import { Seed, seedMax, seedMin } from '@no-day/fp-ts-lcg';
 import * as lcg from '@no-day/fp-ts-lcg';
 import { State } from 'fp-ts/State';
 import * as state from 'fp-ts/State';
-import { pipe } from 'fp-ts/function';
+import { flow, pipe } from 'fp-ts/function';
 import { sequenceT } from 'fp-ts/Apply';
 import * as apply from 'fp-ts/Apply';
 import * as array from 'fp-ts/Array';
 import * as option from 'fp-ts/Option';
 import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray';
 
-// -------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // Re-export
-// -------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 export {
   /**
@@ -39,9 +39,9 @@ export {
   seedMax,
 } from '@no-day/fp-ts-lcg';
 
-// -------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // Model
-// -------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 /**
  * The meaning of size depends on the particular generator used.
@@ -67,9 +67,9 @@ export type GenState = { newSeed: Seed; size: Size };
  */
 export type Gen<T> = State<GenState, T>;
 
-// -------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // Internal
-// -------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 const clamp: (a: number, b: number) => (c: number) => number = (a, b) => (c) => {
   const [min, max] = a < b ? [a, b] : [b, a];
@@ -78,6 +78,12 @@ const clamp: (a: number, b: number) => (c: number) => number = (a, b) => (c) => 
 
   return min + (c % (diff + 1));
 };
+
+/** Create a random generator which depends on the size parameter. */
+const sized = <T>(f: (size: Size) => Gen<T>): Gen<T> => stateful((s) => f(s.size));
+
+/** Create a random generator which uses the generator state explicitly. */
+const stateful: <T>(f: (genState: GenState) => Gen<T>) => Gen<T> = (f) => (s) => f(s)(s);
 
 /**
  * Create a random generator which chooses uniformly distributed integers from the closed interval `[a, b]`. Note that
@@ -118,9 +124,9 @@ const uniform = <T>(): Gen<number> =>
     state.map((n) => n - seedMin / seedDiff)
   );
 
-// -------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // Constructors
-// -------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 /**
  * A random generator which simply outputs the current seed.
@@ -275,6 +281,44 @@ export const vectorOf = (size: number) => <T>(gen: Gen<T>): Gen<Array<T>> =>
   );
 
 /**
+ * Generates a pseudo random array
+ *
+ * @since 1.0.0
+ * @category Constructors
+ * @example
+ *   import { mkSeed, generateSample, arrayOf, int } from '@no-day/fp-ts-generators';
+ *   import { pipe } from 'fp-ts/function';
+ *
+ *   assert.deepStrictEqual(
+ *     pipe(
+ *       arrayOf(int()),
+ *
+ *       generateSample({ count: 10, size: 5, seed: mkSeed(42) })
+ *     ),
+ *     [
+ *       [27],
+ *       [22, -14, 73],
+ *       [-84, -13, 50],
+ *       [-6, 16, -62, 76],
+ *       [-44, 96],
+ *       [48, 0],
+ *       [],
+ *       [23, 75, -63, -71, 64],
+ *       [],
+ *       [-83],
+ *     ]
+ *   );
+ */
+
+export const arrayOf = <T>(gen: Gen<T>): Gen<Array<T>> =>
+  sized(
+    flow(
+      (size) => chooseInt(0, size),
+      state.chain((size) => vectorOf(size)(gen))
+    )
+  );
+
+/**
  * Create a random generator which selects and executes a random generator from a non-empty array of random generators
  * with uniform probability.
  *
@@ -333,9 +377,68 @@ export const oneOf = <T>(gens: NonEmptyArray<Gen<T>>): Gen<T> =>
  */
 export const boolean: Gen<boolean> = oneOf([state.of(false), state.of(true)]);
 
-// -------------------------------------------------------------------------------------
+/**
+ * A pseudo random character
+ *
+ * @since 1.0.0
+ * @category Constructors
+ * @example
+ *   import { mkSeed, generateSample, char } from '@no-day/fp-ts-generators';
+ *   import { pipe } from 'fp-ts/function';
+ *
+ *   assert.deepStrictEqual(
+ *     pipe(
+ *       char(),
+ *
+ *       generateSample({ count: 20, seed: mkSeed(42) })
+ *     ),
+ *     ['K', '}', 'l', 'i', 'C', ':', 'n', 'o', 'q', '0', '{', 'h', '}', 'I', '=', 'o', '<', 'U', 'Z', ';']
+ *   );
+ *
+ *   assert.deepStrictEqual(
+ *     pipe(
+ *       char({ from: 'a', to: 'z' }),
+ *
+ *       generateSample({ count: 20, seed: mkSeed(42) })
+ *     ),
+ *     ['r', 'v', 'l', 'f', 'p', 'i', 'n', 'b', 'k', 's', 'w', 'a', 'j', 'e', 'b', 'q', 'p', 'w', 'a', 'm']
+ *   );
+ */
+export const char = ({ from = ' ', to = '~' }: { from?: string; to?: string } = {}): Gen<string> => {
+  const fromInt = from.charCodeAt(0);
+  const toInt = to.charCodeAt(0);
+
+  return pipe(chooseInt(fromInt, toInt), state.map(String.fromCharCode));
+};
+
+/**
+ * A pseudo random string
+ *
+ * @since 1.0.0
+ * @category Constructors
+ * @example
+ *   import { mkSeed, generateSample, string } from '@no-day/fp-ts-generators';
+ *   import { pipe } from 'fp-ts/function';
+ *
+ *   assert.deepStrictEqual(
+ *     pipe(
+ *       string({ from: 'a', to: 'z' }),
+ *
+ *       generateSample({ count: 10, seed: mkSeed(42) })
+ *     ),
+ *
+ *     ['vlfpinbksw', '', 'ebqpwa', 'uknubf', 'lq', 'jflq', 'fehcuxoqm', 'lsug', 'bat', 't']
+ *   );
+ */
+export const string = ({ from = ' ', to = '~' }: { from?: string; to?: string } = {}): Gen<string> =>
+  pipe(
+    arrayOf(char({ from, to })),
+    state.map((_) => _.join(''))
+  );
+
+// --------------------------------------------------------------------------------------------------------------------
 // Destructors
-// -------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 /**
  * Run a random generator
