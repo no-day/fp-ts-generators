@@ -14,6 +14,10 @@ npm install fp-ts @no-day/fp-ts-generators
 
 - [API Docs](https://no-day.github.io/fp-ts-generators/modules/index.ts.html)
 
+# What it's not
+
+This library is not a testing library in the style of quick-check. It's the intention to provide a library that's only purpose is pseudo random data generation. It can be useful in many fields, e.g. in generative art, mocking APIs or as well as testing.
+
 # Example
 
 ```ts
