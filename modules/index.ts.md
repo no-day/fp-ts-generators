@@ -13,6 +13,7 @@ Added in v1.0.0
 <h2 class="text-delta">Table of contents</h2>
 
 - [Constructors](#constructors)
+  - [boolean](#boolean)
   - [int](#int)
   - [lcgStep](#lcgstep)
   - [oneOf](#oneof)
@@ -36,6 +37,34 @@ Added in v1.0.0
 
 # Constructors
 
+## boolean
+
+A pseudo random boolean
+
+**Signature**
+
+```ts
+export declare const boolean: Gen<boolean>
+```
+
+**Example**
+
+```ts
+import { mkSeed, generateSample, boolean } from '@no-day/fp-ts-generators'
+import { pipe } from 'fp-ts/function'
+
+assert.deepStrictEqual(
+  pipe(
+    boolean,
+
+    generateSample({ seed: mkSeed(42) })
+  ),
+  [true, true, true, true, true, false, true, true, false, false]
+)
+```
+
+Added in v1.0.0
+
 ## int
 
 Generates a pseudo random integer in a given interval
@@ -49,16 +78,16 @@ export declare const int: ({ min, max }?: { min?: number; max?: number }) => Gen
 **Example**
 
 ```ts
-import * as gen from '@no-day/fp-ts-generators'
+import { mkSeed, generateSample, int } from '@no-day/fp-ts-generators'
 import { pipe } from 'fp-ts/function'
 
 assert.deepStrictEqual(
   pipe(
-    gen.int({ min: -10, max: 10 }),
+    int({ min: -10, max: 10 }),
 
-    gen.generateSample({ count: 4, seed: gen.mkSeed(42) })
+    generateSample({ count: 10, seed: mkSeed(42) })
   ),
-  [-9, 3, 8, -2]
+  [-9, 3, 8, -2, -2, -8, -4, 3, -7, -10]
 )
 ```
 
@@ -77,14 +106,14 @@ export declare const lcgStep: Gen<number>
 **Example**
 
 ```ts
-import * as gen from '@no-day/fp-ts-generators'
+import { mkSeed, generateSample, lcgStep } from '@no-day/fp-ts-generators'
 import { pipe } from 'fp-ts/function'
 
 assert.deepStrictEqual(
   pipe(
-    gen.lcgStep,
+    lcgStep,
 
-    gen.generateSample({ count: 4, seed: gen.mkSeed(42) })
+    generateSample({ count: 4, seed: mkSeed(42) })
   ),
   [43, 2075653, 1409598201, 1842888923]
 )
@@ -106,14 +135,14 @@ export declare const oneOf: <T>(gens: NonEmptyArray<Gen<T>>) => Gen<T>
 **Example**
 
 ```ts
-import * as gen from '@no-day/fp-ts-generators'
+import { mkSeed, generateSample, oneOf, int } from '@no-day/fp-ts-generators'
 import { pipe } from 'fp-ts/function'
 
 assert.deepStrictEqual(
   pipe(
-    gen.oneOf([gen.int({ min: 10, max: 20 }), gen.int({ min: 50, max: 60 })]),
+    oneOf([int({ min: 10, max: 20 }), int({ min: 50, max: 60 })]),
 
-    gen.generateSample({ count: 6, seed: gen.mkSeed(42) })
+    generateSample({ count: 6, seed: mkSeed(42) })
   ),
   [58, 57, 55, 60, 12, 10]
 )
@@ -136,35 +165,35 @@ export declare const recordOf: <E, NER>(
 **Example**
 
 ```ts
-import * as gen from '@no-day/fp-ts-generators'
+import { mkSeed, generateSample, recordOf, boolean, int } from '@no-day/fp-ts-generators'
 import { pipe } from 'fp-ts/function'
 
 assert.deepStrictEqual(
   pipe(
-    gen.recordOf({ foo: gen.int(), bar: gen.int(), baz: gen.int() }),
+    recordOf({ bar: boolean, baz: int(), foo: int() }),
 
-    gen.generateSample({ count: 4, seed: gen.mkSeed(42) })
+    generateSample({ count: 4, seed: mkSeed(42) })
   ),
   [
     {
-      bar: 27,
-      baz: -25,
-      foo: -57,
+      bar: true,
+      baz: 27,
+      foo: -25,
     },
     {
-      bar: -14,
-      baz: 73,
-      foo: 22,
+      bar: true,
+      baz: -14,
+      foo: 73,
     },
     {
-      bar: -84,
-      baz: -13,
-      foo: -64,
+      bar: true,
+      baz: -84,
+      foo: -13,
     },
     {
-      bar: 36,
-      baz: -6,
-      foo: 50,
+      bar: false,
+      baz: 36,
+      foo: -6,
     },
   ]
 )
@@ -187,20 +216,20 @@ export declare const tupleOf: <E, T>(
 **Example**
 
 ```ts
-import * as gen from '@no-day/fp-ts-generators'
+import { mkSeed, generateSample, tupleOf, int, boolean } from '@no-day/fp-ts-generators'
 import { pipe } from 'fp-ts/function'
 
 assert.deepStrictEqual(
   pipe(
-    gen.tupleOf(gen.int(), gen.int()),
+    tupleOf(int(), boolean),
 
-    gen.generateSample({ count: 4, seed: gen.mkSeed(42) })
+    generateSample({ count: 4, seed: mkSeed(42) })
   ),
   [
-    [-57, 27],
-    [-25, 22],
-    [-14, 73],
-    [-64, -84],
+    [-57, true],
+    [-25, true],
+    [-14, false],
+    [-64, true],
   ]
 )
 ```
@@ -220,14 +249,14 @@ export declare const vectorOf: (size: number) => <T>(gen: Gen<T>) => Gen<T[]>
 **Example**
 
 ```ts
-import * as gen from '@no-day/fp-ts-generators'
+import { mkSeed, generateSample, vectorOf, int } from '@no-day/fp-ts-generators'
 import { pipe } from 'fp-ts/function'
 
 assert.deepStrictEqual(
   pipe(
-    gen.vectorOf(6)(gen.int()),
+    vectorOf(6)(int()),
 
-    gen.generateSample({ count: 4, seed: gen.mkSeed(42) })
+    generateSample({ count: 4, seed: mkSeed(42) })
   ),
   [
     [-57, 27, -25, 22, -14, 73],
