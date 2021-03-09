@@ -75,6 +75,16 @@ export {
    * @category Monad
    */
   chain,
+  /**
+   * @since 1.0.0
+   * @category Utils
+   */
+  bind,
+  /**
+   * @since 1.0.0
+   * @category Utils
+   */
+  bindTo,
 } from 'fp-ts/State';
 
 // --------------------------------------------------------------------------------------------------------------------

@@ -3,6 +3,7 @@
 A seeded pseudorandom number generator.
 
 <!-- AUTO-GENERATED-CONTENT:START (TOC) -->
+
 - [What it is](#what-it-is)
 - [What it's not](#what-its-not)
 - [Install](#install)
@@ -119,9 +120,11 @@ assert.deepStrictEqual(
 );
 ```
 
+See the `examples` folder for more usage demos.
+
 # JavaScript usage
 
-The library can be used in plain JavaScript as well, you'll find a demo in the examples folder.
+The library can be used in plain JavaScript as well, you'll find a demo in the examples folder, too.
 
 # Inspiration
 
