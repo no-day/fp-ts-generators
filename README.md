@@ -97,6 +97,10 @@ assert.deepStrictEqual(
 );
 ```
 
+# JavaScript usage
+
+The library can be used in plain JavaScript as well, you'll find a demo in the examples folder.
+
 # Inspiration
 
 Parts of this library are ported from [purescript-quickcheck](https://github.com/purescript/purescript-quickcheck).
