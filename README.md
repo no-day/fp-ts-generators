@@ -2,6 +2,32 @@
 
 A seeded pseudorandom number generator.
 
+<!-- AUTO-GENERATED-CONTENT:START (TOC) -->
+- [What it is](#what-it-is)
+- [What it's not](#what-its-not)
+- [Install](#install)
+- [Documentation](#documentation)
+- [Example](#example)
+- [JavaScript usage](#javascript-usage)
+- [Inspiration](#inspiration)
+<!-- AUTO-GENERATED-CONTENT:END -->
+
+# What it is
+
+`fp-ts-generators` is a library that's only purpose is pseudo random data generation. It can be useful in many fields, e.g. in generative art, mocking APIs or as well as property based testing.
+
+With combinators like
+
+```ts
+recordOf({ foo: int(), bar: boolean });
+```
+
+and a given seed, we can deterministically generate random looking data.
+
+# What it's not
+
+This library is not a testing library in the style of quick-check. However, a testing library can be built on top of this package.
+
 # Install
 
 Uses `fp-ts` as a peer dependency.
@@ -13,10 +39,6 @@ npm install fp-ts @no-day/fp-ts-generators
 # Documentation
 
 - [API Docs](https://no-day.github.io/fp-ts-generators/modules/index.ts.html)
-
-# What it's not
-
-This library is not a testing library in the style of quick-check. It's the intention to provide a library that's only purpose is pseudo random data generation. It can be useful in many fields, e.g. in generative art, mocking APIs or as well as testing.
 
 # Example
 
