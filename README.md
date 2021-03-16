@@ -1,6 +1,6 @@
 # fp-ts-generators
 
-A seeded pseudorandom generator for structured data.
+Seeded pseudorandom generators for structured data.
 
 <!-- AUTO-GENERATED-CONTENT:START (TOC) -->
 
