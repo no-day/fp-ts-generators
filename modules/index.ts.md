@@ -6,7 +6,7 @@ parent: Modules
 
 ## index overview
 
-Added in v1.0.0
+Added in v0.1.0
 
 ---
 
@@ -64,7 +64,7 @@ Added in v1.0.0
 export declare const ap: <E, A>(fa: State<E, A>) => <B>(fab: State<E, (a: A) => B>) => State<E, B>
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## of
 
@@ -74,7 +74,7 @@ Added in v1.0.0
 export declare const of: <E, A>(a: A) => State<E, A>
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 # Constructors
 
@@ -104,7 +104,7 @@ assert.deepStrictEqual(
 )
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## boolean
 
@@ -132,7 +132,7 @@ assert.deepStrictEqual(
 )
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## char
 
@@ -169,7 +169,7 @@ assert.deepStrictEqual(
 )
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## float
 
@@ -201,7 +201,7 @@ assert.deepStrictEqual(
 )
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## int
 
@@ -229,7 +229,7 @@ assert.deepStrictEqual(
 )
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## lcgStep
 
@@ -257,7 +257,7 @@ assert.deepStrictEqual(
 )
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## oneOf
 
@@ -286,7 +286,7 @@ assert.deepStrictEqual(
 )
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## recordOf
 
@@ -337,7 +337,7 @@ assert.deepStrictEqual(
 )
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## string
 
@@ -366,7 +366,7 @@ assert.deepStrictEqual(
 )
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## tupleOf
 
@@ -401,7 +401,7 @@ assert.deepStrictEqual(
 )
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## uniform
 
@@ -433,7 +433,7 @@ assert.deepStrictEqual(
 )
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## vectorOf
 
@@ -466,7 +466,7 @@ assert.deepStrictEqual(
 )
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 # Destructors
 
@@ -480,7 +480,7 @@ Run a random generator
 export declare const evalGen: <S>(s: S) => <A>(ma: State<S, A>) => A
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## generate
 
@@ -492,7 +492,7 @@ Run a random generator with a given seed and size.
 export declare const generate: (opts: { seed: Seed; size?: number }) => <T>(gen: Gen<T>) => T
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## generateSample
 
@@ -504,7 +504,7 @@ Run a random generator with a given seed and size. Produces an array of results,
 export declare const generateSample: (opts: { seed: Seed; size?: number; count?: number }) => <T>(gen: Gen<T>) => T[]
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 # Functor
 
@@ -516,7 +516,7 @@ Added in v1.0.0
 export declare const map: <A, B>(f: (a: A) => B) => <E>(fa: State<E, A>) => State<E, B>
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 # Instances
 
@@ -528,7 +528,7 @@ Added in v1.0.0
 export declare const Applicative: Applicative2<'State'>
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## Functor
 
@@ -538,7 +538,7 @@ Added in v1.0.0
 export declare const Functor: Functor2<'State'>
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## Monad
 
@@ -548,7 +548,7 @@ Added in v1.0.0
 export declare const Monad: Monad2<'State'>
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 # Model
 
@@ -562,7 +562,7 @@ The random generator monad
 export type Gen<T> = State<GenState, T>
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## GenState (type alias)
 
@@ -574,7 +574,7 @@ The state of the random generator monad.
 export type GenState = { newSeed: Seed; size: Size }
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## Size (type alias)
 
@@ -586,7 +586,7 @@ The meaning of size depends on the particular generator used.
 export type Size = number
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 # Monad
 
@@ -598,7 +598,7 @@ Added in v1.0.0
 export declare const chain: <E, A, B>(f: (a: A) => State<E, B>) => (ma: State<E, A>) => State<E, B>
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 # Util
 
@@ -612,7 +612,7 @@ Creates a seed to that's needed for the random generator
 export declare const mkSeed: (n: number) => Seed
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## seedMax
 
@@ -624,7 +624,7 @@ Maximum possible seed value
 export declare const seedMax: number
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## seedMin
 
@@ -636,7 +636,7 @@ Minimum possible seed value
 export declare const seedMin: number
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 # Utils
 
@@ -651,7 +651,7 @@ export declare const bind: <N extends string, A, S, B>(
 ) => (fa: State<S, A>) => State<S, { [K in N | keyof A]: K extends keyof A ? A[K] : B }>
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## bindTo
 
@@ -661,4 +661,4 @@ Added in v1.0.0
 export declare const bindTo: <N extends string>(name: N) => <S, A>(fa: State<S, A>) => State<S, { [K in N]: A }>
 ```
 
-Added in v1.0.0
+Added in v0.1.0
