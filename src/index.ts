@@ -1,4 +1,4 @@
-/** @since 1.0.0 */
+/** @since 0.1.0 */
 
 import { Seed, seedMax, seedMin } from '@no-day/fp-ts-lcg';
 import * as lcg from '@no-day/fp-ts-lcg';
@@ -19,21 +19,21 @@ export {
   /**
    * Creates a seed to that's needed for the random generator
    *
-   * @since 1.0.0
+   * @since 0.1.0
    * @category Util
    */
   mkSeed,
   /**
    * Minimum possible seed value
    *
-   * @since 1.0.0
+   * @since 0.1.0
    * @category Util
    */
   seedMin,
   /**
    * Maximum possible seed value
    *
-   * @since 1.0.0
+   * @since 0.1.0
    * @category Util
    */
   seedMax,
@@ -41,47 +41,47 @@ export {
 
 export {
   /**
-   * @since 1.0.0
+   * @since 0.1.0
    * @category Instances
    */
   Functor,
   /**
-   * @since 1.0.0
+   * @since 0.1.0
    * @category Functor
    */
   map,
   /**
-   * @since 1.0.0
+   * @since 0.1.0
    * @category Instances
    */
   Applicative,
   /**
-   * @since 1.0.0
+   * @since 0.1.0
    * @category Applicative
    */
   of,
   /**
-   * @since 1.0.0
+   * @since 0.1.0
    * @category Applicative
    */
   ap,
   /**
-   * @since 1.0.0
+   * @since 0.1.0
    * @category Instances
    */
   Monad,
   /**
-   * @since 1.0.0
+   * @since 0.1.0
    * @category Monad
    */
   chain,
   /**
-   * @since 1.0.0
+   * @since 0.1.0
    * @category Utils
    */
   bind,
   /**
-   * @since 1.0.0
+   * @since 0.1.0
    * @category Utils
    */
   bindTo,
@@ -94,7 +94,7 @@ export {
 /**
  * The meaning of size depends on the particular generator used.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Model
  */
 export type Size = number;
@@ -102,7 +102,7 @@ export type Size = number;
 /**
  * The state of the random generator monad.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Model
  */
 export type GenState = { newSeed: Seed; size: Size };
@@ -110,7 +110,7 @@ export type GenState = { newSeed: Seed; size: Size };
 /**
  * The random generator monad
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Model
  */
 export type Gen<T> = State<GenState, T>;
@@ -137,7 +137,7 @@ const stateful: <T>(f: (genState: GenState) => Gen<T>) => Gen<T> = (f) => (s) =>
  * Create a random generator which chooses uniformly distributed integers from the closed interval `[a, b]`. Note that
  * very large intervals (above 2^32) will cause a loss of uniformity.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Constructors
  */
 const chooseInt: (a: number, b: number) => Gen<number> = (a, b) => {
@@ -172,7 +172,7 @@ const seedDiff = seedMax - seedMin;
 /**
  * A random generator which simply outputs the current seed.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Constructors
  * @example
  *   import { mkSeed, generateSample, lcgStep } from '@no-day/fp-ts-generators';
@@ -193,7 +193,7 @@ export const lcgStep: Gen<number> = (s) => [lcg.unSeed(s.newSeed), { newSeed: lc
 /**
  * A random generator which approximates a uniform random variable on `[0, 1]`
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Constructors
  * @example
  *   import { mkSeed, generateSample, uniform } from '@no-day/fp-ts-generators';
@@ -221,7 +221,7 @@ export const uniform = <T>(): Gen<number> =>
 /**
  * Generates a pseudo random integer in a given interval
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Constructors
  * @example
  *   import { mkSeed, generateSample, int } from '@no-day/fp-ts-generators';
@@ -247,7 +247,7 @@ export const int = ({
 /**
  * Generates a pseudo random float in a given interval
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Constructors
  * @example
  *   import { mkSeed, generateSample, float } from '@no-day/fp-ts-generators';
@@ -284,7 +284,7 @@ export const float = ({
 /**
  * Generates a pseudo random record if generators are provided for each field
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Constructors
  * @example
  *   import { mkSeed, generateSample, recordOf, boolean, int } from '@no-day/fp-ts-generators';
@@ -325,7 +325,7 @@ export const recordOf = apply.sequenceS(state.state);
 /**
  * Generates a pseudo random tuple if generators are provided for each position
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Constructors
  * @example
  *   import { mkSeed, generateSample, tupleOf, int, boolean } from '@no-day/fp-ts-generators';
@@ -350,7 +350,7 @@ export const tupleOf = apply.sequenceT(state.state);
 /**
  * Generates a pseudo random array of a fixed size
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Constructors
  * @example
  *   import { mkSeed, generateSample, vectorOf, int } from '@no-day/fp-ts-generators';
@@ -389,7 +389,7 @@ export const vectorOf = (size: number) => <T>(gen: Gen<T>): Gen<Array<T>> =>
 /**
  * Generates a pseudo random array
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Constructors
  * @example
  *   import { mkSeed, generateSample, arrayOf, int } from '@no-day/fp-ts-generators';
@@ -428,7 +428,7 @@ export const arrayOf = <T>(gen: Gen<T>): Gen<Array<T>> =>
  * Create a random generator which selects and executes a random generator from a non-empty array of random generators
  * with uniform probability.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Constructors
  * @example
  *   import { mkSeed, generateSample, oneOf, int } from '@no-day/fp-ts-generators';
@@ -466,7 +466,7 @@ export const oneOf = <T>(gens: NonEmptyArray<Gen<T>>): Gen<T> =>
 /**
  * A pseudo random boolean
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Constructors
  * @example
  *   import { mkSeed, generateSample, boolean } from '@no-day/fp-ts-generators';
@@ -486,7 +486,7 @@ export const boolean: Gen<boolean> = oneOf([state.of(false), state.of(true)]);
 /**
  * A pseudo random character
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Constructors
  * @example
  *   import { mkSeed, generateSample, char } from '@no-day/fp-ts-generators';
@@ -520,7 +520,7 @@ export const char = ({ from = ' ', to = '~' }: { from?: string; to?: string } = 
 /**
  * A pseudo random string
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Constructors
  * @example
  *   import { mkSeed, generateSample, string } from '@no-day/fp-ts-generators';
@@ -549,7 +549,7 @@ export const string = ({ from = ' ', to = '~' }: { from?: string; to?: string } 
 /**
  * Run a random generator
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Destructors
  */
 export const evalGen = state.evaluate;
@@ -557,7 +557,7 @@ export const evalGen = state.evaluate;
 /**
  * Run a random generator with a given seed and size.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Destructors
  */
 export const generate: (opts: { seed: Seed; size?: Size }) => <T>(gen: Gen<T>) => T = ({ seed, size = 10 }) => (gen) =>
@@ -566,7 +566,7 @@ export const generate: (opts: { seed: Seed; size?: Size }) => <T>(gen: Gen<T>) =
 /**
  * Run a random generator with a given seed and size. Produces an array of results, configured by count.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Destructors
  */
 export const generateSample: (opts: { seed: Seed; size?: Size; count?: number }) => <T>(gen: Gen<T>) => T[] = ({
