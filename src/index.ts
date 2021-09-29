@@ -286,6 +286,47 @@ export const float = ({
 };
 
 /**
+ * Generates a pseudo random struct if generators are provided for each field
+ *
+ * @since 0.1.0
+ * @category Constructors
+ * @example
+ *   import { mkSeed, generateSample, structOf, boolean, int } from '@no-day/fp-ts-generators';
+ *   import { pipe } from 'fp-ts/function';
+ *
+ *   assert.deepStrictEqual(
+ *     pipe(
+ *       structOf({ bar: boolean, baz: int(), foo: int() }),
+ *
+ *       generateSample({ count: 4, seed: mkSeed(42) })
+ *     ),
+ *     [
+ *       {
+ *         bar: true,
+ *         baz: 27,
+ *         foo: -25,
+ *       },
+ *       {
+ *         bar: true,
+ *         baz: -14,
+ *         foo: 73,
+ *       },
+ *       {
+ *         bar: true,
+ *         baz: -84,
+ *         foo: -13,
+ *       },
+ *       {
+ *         bar: false,
+ *         baz: 36,
+ *         foo: -6,
+ *       },
+ *     ]
+ *   );
+ */
+export const structOf = apply.sequenceS(state.state);
+
+/**
  * Generates a pseudo random record if generators are provided for each field
  *
  * @since 0.1.0
