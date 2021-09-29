@@ -179,6 +179,25 @@ const seedDiff = seedMax - seedMin;
  * @since 0.1.0
  * @category Constructors
  * @example
+ *   import { mkSeed, generateSample, seeded } from '@no-day/fp-ts-generators';
+ *   import { pipe } from 'fp-ts/function';
+ *
+ *   assert.deepStrictEqual(pipe(seeded, generateSample({ count: 4, seed: mkSeed(42) })), [
+ *     43,
+ *     2075653,
+ *     1409598201,
+ *     1842888923,
+ *   ]);
+ */
+export const seeded: Gen<number> = (s) => [lcg.unSeed(s.newSeed), { newSeed: lcg.lcgNext(s.newSeed), size: s.size }];
+
+/**
+ * A random generator which simply outputs the current seed.
+ *
+ * @deprecated
+ * @since 0.1.0
+ * @category Constructors
+ * @example
  *   import { mkSeed, generateSample, lcgStep } from '@no-day/fp-ts-generators';
  *   import { pipe } from 'fp-ts/function';
  *
@@ -191,8 +210,7 @@ const seedDiff = seedMax - seedMin;
  *     [43, 2075653, 1409598201, 1842888923]
  *   );
  */
-
-export const lcgStep: Gen<number> = (s) => [lcg.unSeed(s.newSeed), { newSeed: lcg.lcgNext(s.newSeed), size: s.size }];
+export const lcgStep: Gen<number> = seeded;
 
 /**
  * A random generator which approximates a uniform random variable on `[0, 1]`
