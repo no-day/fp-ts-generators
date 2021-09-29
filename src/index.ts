@@ -127,8 +127,12 @@ const clamp: (a: number, b: number) => (c: number) => number = (a, b) => (c) => 
   return min + (c % (diff + 1));
 };
 
-/** Create a random generator which depends on the size parameter. */
-const sized = <T>(f: (size: Size) => Gen<T>): Gen<T> => stateful((s) => f(s.size));
+/**
+ * A generator that returns its current size.
+ *
+ * @category Constructors
+ */
+export const sized: Gen<number> = state.gets((genState) => genState.size);
 
 /** Create a random generator which uses the generator state explicitly. */
 const stateful: <T>(f: (genState: GenState) => Gen<T>) => Gen<T> = (f) => (s) => f(s)(s);
@@ -417,11 +421,10 @@ export const vectorOf = (size: number) => <T>(gen: Gen<T>): Gen<Array<T>> =>
  */
 
 export const arrayOf = <T>(gen: Gen<T>): Gen<Array<T>> =>
-  sized(
-    flow(
-      (size) => chooseInt(0, size),
-      state.chain((size) => vectorOf(size)(gen))
-    )
+  pipe(
+    sized,
+    state.chain((size) => chooseInt(0, size)),
+    state.chain((size) => vectorOf(size)(gen))
   );
 
 /**
