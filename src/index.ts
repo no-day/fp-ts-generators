@@ -329,6 +329,7 @@ export const structOf = apply.sequenceS(state.state);
 /**
  * Generates a pseudo random record if generators are provided for each field
  *
+ * @deprecated Use `structOf` instead
  * @since 0.1.0
  * @category Constructors
  * @example
