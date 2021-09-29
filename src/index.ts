@@ -223,6 +223,18 @@ export const uniform = <T>(): Gen<number> =>
   );
 
 /**
+ * Applies `lcg.perturb` to the the seed.
+ *
+ * @category Combinators
+ */
+export function perturb(d: number): Gen<void> {
+  return state.modify(({ newSeed, size }) => ({
+    newSeed: lcg.lcgPertub(d)(newSeed),
+    size,
+  }));
+}
+
+/**
  * Generates a pseudo random integer in a given interval
  *
  * @since 0.1.0
