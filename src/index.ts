@@ -253,6 +253,19 @@ export function perturb(d: number): Gen<void> {
 }
 
 /**
+ * Modifies a generator using an integer seed.
+ *
+ * @category Combinators
+ */
+export function variant(seed: number): <A>(fa: Gen<A>) => Gen<A> {
+  return (fa) =>
+    pipe(
+      fa,
+      state.chainFirst(() => state.modify(({ size }) => ({ size, newSeed: lcg.mkSeed(seed) })))
+    );
+}
+
+/**
  * Generates a pseudo random integer in a given interval
  *
  * @since 0.1.0
