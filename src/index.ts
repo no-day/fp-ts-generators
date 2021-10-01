@@ -130,6 +130,7 @@ const clamp: (a: number, b: number) => (c: number) => number = (a, b) => (c) => 
 /**
  * A generator that returns its current size.
  *
+ * @since 0.2.0
  * @category Constructors
  */
 export const sized: Gen<number> = state.gets((genState) => genState.size);
@@ -243,6 +244,7 @@ export const uniform = <T>(): Gen<number> =>
 /**
  * Applies `lcg.perturb` to the the seed.
  *
+ * @since 0.2.0
  * @category Combinators
  */
 export function perturb(d: number): Gen<void> {
@@ -255,6 +257,7 @@ export function perturb(d: number): Gen<void> {
 /**
  * Modifies a generator using an integer seed.
  *
+ * @since 0.2.0
  * @category Combinators
  */
 export function variant(seed: number): <A>(fa: Gen<A>) => Gen<A> {
