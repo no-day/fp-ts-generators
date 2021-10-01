@@ -127,8 +127,13 @@ const clamp: (a: number, b: number) => (c: number) => number = (a, b) => (c) => 
   return min + (c % (diff + 1));
 };
 
-/** Create a random generator which depends on the size parameter. */
-const sized = <T>(f: (size: Size) => Gen<T>): Gen<T> => stateful((s) => f(s.size));
+/**
+ * A generator that returns its current size.
+ *
+ * @since 0.2.0
+ * @category Constructors
+ */
+export const sized: Gen<number> = state.gets((genState) => genState.size);
 
 /** Create a random generator which uses the generator state explicitly. */
 const stateful: <T>(f: (genState: GenState) => Gen<T>) => Gen<T> = (f) => (s) => f(s)(s);
@@ -175,6 +180,25 @@ const seedDiff = seedMax - seedMin;
  * @since 0.1.0
  * @category Constructors
  * @example
+ *   import { mkSeed, generateSample, seeded } from '@no-day/fp-ts-generators';
+ *   import { pipe } from 'fp-ts/function';
+ *
+ *   assert.deepStrictEqual(pipe(seeded, generateSample({ count: 4, seed: mkSeed(42) })), [
+ *     43,
+ *     2075653,
+ *     1409598201,
+ *     1842888923,
+ *   ]);
+ */
+export const seeded: Gen<number> = (s) => [lcg.unSeed(s.newSeed), { newSeed: lcg.lcgNext(s.newSeed), size: s.size }];
+
+/**
+ * A random generator which simply outputs the current seed.
+ *
+ * @deprecated
+ * @since 0.1.0
+ * @category Constructors
+ * @example
  *   import { mkSeed, generateSample, lcgStep } from '@no-day/fp-ts-generators';
  *   import { pipe } from 'fp-ts/function';
  *
@@ -187,8 +211,7 @@ const seedDiff = seedMax - seedMin;
  *     [43, 2075653, 1409598201, 1842888923]
  *   );
  */
-
-export const lcgStep: Gen<number> = (s) => [lcg.unSeed(s.newSeed), { newSeed: lcg.lcgNext(s.newSeed), size: s.size }];
+export const lcgStep: Gen<number> = seeded;
 
 /**
  * A random generator which approximates a uniform random variable on `[0, 1]`
@@ -217,6 +240,33 @@ export const uniform = <T>(): Gen<number> =>
     lcgStep,
     state.map((n) => (n - seedMin) / seedDiff)
   );
+
+/**
+ * Applies `lcg.perturb` to the the seed.
+ *
+ * @since 0.2.0
+ * @category Combinators
+ */
+export function perturb(d: number): Gen<void> {
+  return state.modify(({ newSeed, size }) => ({
+    newSeed: lcg.lcgPertub(d)(newSeed),
+    size,
+  }));
+}
+
+/**
+ * Modifies a generator using an integer seed.
+ *
+ * @since 0.2.0
+ * @category Combinators
+ */
+export function variant(seed: number): <A>(fa: Gen<A>) => Gen<A> {
+  return (fa) =>
+    pipe(
+      fa,
+      state.chainFirst(() => state.modify(({ size }) => ({ size, newSeed: lcg.mkSeed(seed) })))
+    );
+}
 
 /**
  * Generates a pseudo random integer in a given interval
@@ -282,8 +332,50 @@ export const float = ({
 };
 
 /**
+ * Generates a pseudo random struct if generators are provided for each field
+ *
+ * @since 0.1.0
+ * @category Constructors
+ * @example
+ *   import { mkSeed, generateSample, structOf, boolean, int } from '@no-day/fp-ts-generators';
+ *   import { pipe } from 'fp-ts/function';
+ *
+ *   assert.deepStrictEqual(
+ *     pipe(
+ *       structOf({ bar: boolean, baz: int(), foo: int() }),
+ *
+ *       generateSample({ count: 4, seed: mkSeed(42) })
+ *     ),
+ *     [
+ *       {
+ *         bar: true,
+ *         baz: 27,
+ *         foo: -25,
+ *       },
+ *       {
+ *         bar: true,
+ *         baz: -14,
+ *         foo: 73,
+ *       },
+ *       {
+ *         bar: true,
+ *         baz: -84,
+ *         foo: -13,
+ *       },
+ *       {
+ *         bar: false,
+ *         baz: 36,
+ *         foo: -6,
+ *       },
+ *     ]
+ *   );
+ */
+export const structOf = apply.sequenceS(state.state);
+
+/**
  * Generates a pseudo random record if generators are provided for each field
  *
+ * @deprecated Use `structOf` instead
  * @since 0.1.0
  * @category Constructors
  * @example
@@ -417,11 +509,10 @@ export const vectorOf = (size: number) => <T>(gen: Gen<T>): Gen<Array<T>> =>
  */
 
 export const arrayOf = <T>(gen: Gen<T>): Gen<Array<T>> =>
-  sized(
-    flow(
-      (size) => chooseInt(0, size),
-      state.chain((size) => vectorOf(size)(gen))
-    )
+  pipe(
+    sized,
+    state.chain((size) => chooseInt(0, size)),
+    state.chain((size) => vectorOf(size)(gen))
   );
 
 /**
